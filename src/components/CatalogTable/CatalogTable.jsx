@@ -12,17 +12,16 @@ import Select, {SelectChangeEvent} from '@mui/material/Select';
 import Pagination from '../Pagination/Pagination';
 import {useContext, useEffect, useState} from "react";
 import Paper from "@mui/material/Paper";
-import Checkbox from '@mui/material/Checkbox';
-import {CartContext} from "../../context/CartContext";
+import {ItemsContext} from "../../context/ItemsContext";
 
-export default function CatalogTable({items}) {
+export default function CatalogTable({items, withPagination= true, requireNavigate = true, urlBase='catalog'}) {
   const navigate = useNavigate();
-  const [productsOnPage, setProductsOnPage] = useState(10);
+  const {perPage, setPerPage, pages} = useContext(ItemsContext);
   // end pagination
 
-  const {addItem, removeItem, isItemInCart, reloader} = useContext(CartContext);
-
   const [data, setData] = useState([]);
+
+  console.log(items);
 
   useEffect(() => {
     const currentData = items.map((product, index) => {
@@ -35,17 +34,22 @@ export default function CatalogTable({items}) {
           backgroundColor: (index % 2 === 1) ? "" : "#f2f2f2",
           boxShadow: { md: "none", xs: "0px 4px 5px -2px rgba(0,0,0,0.2),0px 7px 10px 1px rgba(0,0,0,0.14),0px 2px 16px 1px rgba(0,0,0,0.12)" }
         }} onClick={() => {
-          navigate(`/catalog/${product.id}`)
+          if (requireNavigate) {
+            navigate(`/catalog/${product.id}`)
+          }
         }}>
           <Grid container alignItems="center" spacing={2} sx={{marginTop: {xs: "15px", md: 'auto'}, marginBottom: "10px"}}>
             {/*<Grid xs={1} md={1}>*/}
             {/*  <Checkbox />*/}
             {/*</Grid>*/}
             <Grid sx={{display: "flex", alignItems: "center", justifyContent: {xs: "center"}}} xs={6} md={2}>
-              <Box component="img" sx={{height: 90, objectFit: "cover", borderRadius: "10px"}} src={product.imageUrl} alt={""} />
+              <Box component="img" sx={{height: 90, objectFit: "cover", borderRadius: "10px"}} src={product.url} alt={""} />
             </Grid>
-            <Grid xs={6} md={2}>
-              {product.condition}
+            <Grid xs={6} md={1}>
+              {product.item_no}
+            </Grid>
+            <Grid xs={6} md={1}>
+              {product.remarks}
             </Grid>
             <Grid xs={6} md={2}>
               {product.color}
@@ -55,16 +59,17 @@ export default function CatalogTable({items}) {
             </Grid>
             <Grid xs={12} md={3}>
               <Stack>
+                {product.quantity_in_order &&
+                  <Typography>
+                    Количество в заказе: {product.quantity_in_order}
+                  </Typography>
+                }
                 <Typography>
                   Наличие: {product.quantity}
                 </Typography>
                 <Typography>
-                  Цена: {product.price} {product.currency}
+                  Цена: {product.price || product.unit_price}
                 </Typography>
-                {isItemInCart(product.id)
-                  ? <Button className={"accent-button-style"} onClick={() => removeItem(product.id)}>Убрать из корзины</Button>
-                  : <Button className={"accent-button-style"} onClick={() => addItem(product)}>Добавить в корзину</Button>
-                }
               </Stack>
             </Grid>
           </Grid>
@@ -83,7 +88,7 @@ export default function CatalogTable({items}) {
         </Box>
       )
     }
-  }, [items, reloader]);
+  }, [items]);
 
   return (
     <div className="buyouts-table">
@@ -98,9 +103,14 @@ export default function CatalogTable({items}) {
                 Изображение
               </strong>
             </Grid>
-            <Grid xs={2}>
+            <Grid xs={1}>
               <strong>
-                Состояние
+                Номер детали
+              </strong>
+            </Grid>
+            <Grid xs={1}>
+              <strong>
+                Заметки
               </strong>
             </Grid>
             <Grid xs={2}>
@@ -122,8 +132,8 @@ export default function CatalogTable({items}) {
         }
         {data}
       </Box>
-      {items &&
-      <Pagination urlBase="catalog" itemsLen={items.length} productsOnPage={productsOnPage} setProductsOnPage={setProductsOnPage}/>
+      {items && withPagination &&
+      <Pagination urlBase={urlBase} itemsLen={items.length} amountOfPages={pages} productsOnPage={perPage} setProductsOnPage={setPerPage}/>
       }
     </div>
   );

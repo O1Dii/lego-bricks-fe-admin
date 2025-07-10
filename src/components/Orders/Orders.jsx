@@ -32,7 +32,7 @@ export default function Orders() {
                 Заказы
               </strong>
             </Typography>
-            <OrdersTable orders={orders}/>
+            <OrdersTable orders={orders.orders || []}/>
           </Grid>
         </Grid>
       </Box>

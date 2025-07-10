@@ -3,43 +3,99 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Navigation from "../Navigation/Navigation";
 import TextField from "@mui/material/TextField";
-import {Button} from "@mui/material";
-import {useContext, useState} from "react";
-import {CONFIGS_SAVE_EXCHANGE_RATES} from "../../constants/links";
+import {Alert, Button, Snackbar} from "@mui/material";
+import React, {useContext, useEffect, useState} from "react";
+import {CONFIGS_GET_EXCHANGE_RATES, CONFIGS_SAVE_EXCHANGE_RATES} from "../../constants/links";
 import axios from "axios";
 import {UserContext} from "../../context/UserContext";
+import Stack from "@mui/material/Stack";
 
 
 export default function Configs() {
-  const {user} = useContext(UserContext)
+  const {user, logout} = useContext(UserContext)
+  // TODO: change to true
+  const [loading, setLoading] = useState(false);
   const [rusRub, setRusRub] = useState(0);
   const [belRub, setBelRub] = useState(0);
+  const [min, setMin] = useState(0);
+
+  const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
+  const [failureSnackbarOpen, setFailureSnackbarOpen] = useState(false);
+
+
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get(CONFIGS_GET_EXCHANGE_RATES())
+      .then(response => {
+        setLoading(false);
+        setBelRub(response.data.byn)
+        setRusRub(response.data.rub)
+        setMin(response.data.min)
+      })
+      .catch(error => {
+        setLoading(false);
+      })
+  }, [])
 
   const onSave = (e) => {
     e.preventDefault();
     axios
       .post(CONFIGS_SAVE_EXCHANGE_RATES(), {
-        rusRub,
-        belRub
+        rub: rusRub,
+        byn: belRub,
+        min
       }, {
         headers: {
-          'Authorization': `Bearer ${user.accessToken}`,
+          'Authorization': `Bearer ${user.accessToken}`
         }
       })
       .then(response => {
-        alert('Успешно!')
+        setSuccessSnackbarOpen(true)
       })
       .catch(error => {
-        alert('Ошибка')
+        setFailureSnackbarOpen(true);
       })
+  }
+
+  const handleExitClick = () => {
+    logout();
   }
 
   return (
     <>
       <Navigation>
       </Navigation>
+      <Snackbar
+        open={successSnackbarOpen}
+        autoHideDuration={5000}
+        onClose={() => setSuccessSnackbarOpen(false)}
+      >
+        <Alert
+          onClose={() => setSuccessSnackbarOpen(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          Изменения успешно сохранены!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={failureSnackbarOpen}
+        autoHideDuration={5000}
+        onClose={() => setFailureSnackbarOpen(false)}
+      >
+        <Alert
+          onClose={() => setFailureSnackbarOpen(false)}
+          severity="error"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          Произошла ошибка!
+        </Alert>
+      </Snackbar>
       <Box className={"main-page-content"}>
-        <Grid container spacing={0}>
+        <Grid container spacing={0} sx={{padding: "20px"}}>
           <Grid item xs={12}>
             <Typography variant="h4" align="left" gutterBottom>
               <strong>
@@ -49,10 +105,14 @@ export default function Configs() {
           </Grid>
           <Grid item xs={12}>
             <Box component={"form"} onSubmit={onSave}>
-              <TextField label="Курс российского рубля к доллару" value={rusRub} onChange={(e) => setRusRub(e.target.value)} />
-              <TextField label="Курс белорусского рубля к доллару" value={belRub} onChange={(e) => setBelRub(e.target.value)} />
-              <Button type={'submit'}>Сохранить</Button>
+              <Stack spacing={2}>
+                <TextField label="Курс российского рубля к доллару" type={'number'} value={rusRub} onChange={(e) => setRusRub(e.target.value)} />
+                <TextField label="Курс белорусского рубля к доллару" type={'number'} value={belRub} onChange={(e) => setBelRub(e.target.value)} />
+                <TextField label="Минимальная цена заказа" type={'number'} value={min} onChange={(e) => setMin(e.target.value)} />
+                <Button type={'submit'}>Сохранить</Button>
+              </Stack>
             </Box>
+            <Button onClick={handleExitClick}>Выйти из аккаунта</Button>
           </Grid>
         </Grid>
       </Box>

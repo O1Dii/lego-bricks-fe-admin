@@ -16,27 +16,27 @@ export default function UserContextProvider(props) {
   const navigate = useNavigate();
   // requestInfo (status, detail, data)
 
-  // useEffect(() => {
-  //   const localStorageUserInfo = localStorage.getItem('user');
-  //   if (localStorageUserInfo) {
-  //     setUser(JSON.parse(localStorageUserInfo));
-  //   } else {
-  //     logout();
-  //   }
-  // }, [])
+  useEffect(() => {
+    const localStorageUserInfo = sessionStorage.getItem('user');
+    if (localStorageUserInfo) {
+      setUser(JSON.parse(localStorageUserInfo));
+    } else {
+      logout();
+    }
+  }, [])
 
   const authenticate = (login, password) => {
     setLoading(true);
     axios
-      .post(AUTHENTICATE(), {login, password})
+      .post(AUTHENTICATE(), {username: login, password})
       .then(response => {
         setLoading(false);
         const userObject = {
           accessToken: response.data.access_token
         }
         setUser(userObject);
-        localStorage.removeItem('user');
-        localStorage.setItem('user', JSON.stringify(userObject))
+        sessionStorage.removeItem('user');
+        sessionStorage.setItem('user', JSON.stringify(userObject))
       })
       .catch(error => {
         setLoading(false);
@@ -45,7 +45,7 @@ export default function UserContextProvider(props) {
   }
 
   const logout = () => {
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
     setUser({});
     navigate("/login");
   }

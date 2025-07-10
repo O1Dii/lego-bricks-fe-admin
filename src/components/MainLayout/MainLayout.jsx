@@ -2,19 +2,19 @@ import React from "react";
 import {Outlet} from 'react-router-dom';
 import Box from "@mui/material/Box";
 import ItemsContextProvider from "../../context/ItemsContext";
-import CartContextProvider from "../../context/CartContext";
+import OrdersContextProvider from "../../context/OrdersContext";
 
 function MainLayout() {
   return (
     <div className="App">
         <ItemsContextProvider>
-          <CartContextProvider>
+          <OrdersContextProvider>
             <Box sx={{display: 'flex'}}>
               <Box sx={{width: "100%"}}>
                 <Outlet />
               </Box>
             </Box>
-          </CartContextProvider>
+          </OrdersContextProvider>
         </ItemsContextProvider>
     </div>
   );

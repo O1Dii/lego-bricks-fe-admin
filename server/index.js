@@ -6,13 +6,13 @@ const app = express(),
   HTML_FILE = path.join(DIST_DIR, 'index.html')
 app.use(express.static(DIST_DIR))
 
-const urls_list = ['/login', '/', '/catalog', '/orders', '/configs'];
-
-for (const item of urls_list) {
-  app.get(item, (req, res) => {
+// const urls_list = ['/login', '/', '/catalog', '/orders', '/configs'];
+//
+// for (const item of urls_list) {
+  app.get('*', (req, res) => {
     res.sendFile(HTML_FILE)
   })
-}
+// }
 
 app.use('/static/dist', express.static(DIST_DIR))
 

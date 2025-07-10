@@ -2,24 +2,27 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import Pagination from '../Pagination/Pagination';
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import Paper from "@mui/material/Paper";
 import {useNavigate} from "react-router-dom";
+import {Checkbox} from "@mui/material";
+import {ItemsContext} from "../../context/ItemsContext";
+import {OrdersContext} from "../../context/OrdersContext";
 
 export default function OrdersTable({orders}) {
   const navigate = useNavigate();
-  const [productsOnPage, setProductsOnPage] = useState(10);
+  const {perPage, setPerPage, pages} = useContext(OrdersContext);
   // end pagination
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
     const currentData = orders.map((order, index) => {
-      const priceSum = (order?.items || []).reduce((total, item) => {
-        const price = Number(item.price) || 0;
-        const quantity = Number(item.quantity) || 0;
-        return total + price * quantity;
-      }, 0);
+      // const priceSum = (order?.items || []).reduce((total, item) => {
+      //   const price = Number(item.price) || 0;
+      //   const quantity = Number(item.quantity) || 0;
+      //   return total + price * quantity;
+      // }, 0);
       return (
         <Paper sx={{
           width: {xs: "auto"},
@@ -33,16 +36,16 @@ export default function OrdersTable({orders}) {
         }}>
           <Grid container alignItems="center" spacing={2} sx={{marginTop: {xs: "15px", md: 'auto'}, marginBottom: "10px"}}>
             <Grid xs={6} md={3}>
-              {order.email}
+              {order.customer_name}
             </Grid>
             <Grid xs={6} md={3}>
-              {order.phone}
+              {order.customer_telephone}
             </Grid>
             <Grid xs={6} md={3}>
-              {order.address}
+              <Checkbox checked={order.dostavka} />
             </Grid>
             <Grid xs={6} md={3}>
-              {priceSum}
+              {Math.round((order.total_price + Number.EPSILON) * 100) / 100}
             </Grid>
           </Grid>
         </Paper>
@@ -69,7 +72,7 @@ export default function OrdersTable({orders}) {
           <Grid sx={{display: {xs: "none", md: "flex"}, padding: "25px 0"}} container spacing={2}>
             <Grid xs={3}>
               <strong>
-                Email
+                Имя
               </strong>
             </Grid>
             <Grid xs={3}>
@@ -79,7 +82,7 @@ export default function OrdersTable({orders}) {
             </Grid>
             <Grid xs={3}>
               <strong>
-                Адрес
+                Нужна ли доставка
               </strong>
             </Grid>
             <Grid xs={3}>
@@ -92,7 +95,7 @@ export default function OrdersTable({orders}) {
         {data}
       </Box>
       {orders &&
-      <Pagination urlBase="cart" itemsLen={orders.length} productsOnPage={productsOnPage} setProductsOnPage={setProductsOnPage}/>
+      <Pagination urlBase="orders" itemsLen={orders.length} amountOfPages={pages} productsOnPage={perPage} setProductsOnPage={setPerPage}/>
       }
     </div>
   );

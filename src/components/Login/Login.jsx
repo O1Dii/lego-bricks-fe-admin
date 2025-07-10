@@ -16,7 +16,7 @@ function LoggedInLayout() {
 
   useEffect(() => {
     if (user.accessToken) {
-      navigate("/my-items")
+      navigate("/catalog")
     }
   }, [user, user.accessToken]);
 
@@ -28,7 +28,7 @@ function LoggedInLayout() {
         </Grid>
         <Grid item sx={{backgroundColor: "white"}} xs={12} md={3}>
           <Stack spacing={2} sx={{height: "100%", display: "flex", alignItems: "center", justifyContent: "center", margin: "50px"}}>
-            <TextField id="login" sx={{width: "100%"}} label="Номер телефона" variant={"outlined"} value={login} onChange={e => setLogin(e.target.value)}/>
+            <TextField id="login" sx={{width: "100%"}} label="Логин" variant={"outlined"} value={login} onChange={e => setLogin(e.target.value)}/>
             <TextField id="password" sx={{width: "100%"}} label="Пароль" variant={"outlined"} value={password} onChange={e => setPassword(e.target.value)}/>
             <Button className={"accent-button-style"} onClick={() => {
               authenticate(login, password);
