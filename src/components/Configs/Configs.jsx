@@ -106,10 +106,10 @@ export default function Configs() {
           <Grid item xs={12}>
             <Box component={"form"} onSubmit={onSave}>
               <Stack spacing={2}>
-                <TextField label="Курс российского рубля к доллару" type={'number'} value={rusRub} onChange={(e) => setRusRub(e.target.value)} />
-                <TextField label="Курс белорусского рубля к доллару" type={'number'} value={belRub} onChange={(e) => setBelRub(e.target.value)} />
-                <TextField label="Минимальная цена заказа" type={'number'} value={min} onChange={(e) => setMin(e.target.value)} />
-                <Button type={'submit'}>Сохранить</Button>
+                <TextField label="Курс российского рубля к доллару" type={'number'} step="any" value={rusRub || ''} onChange={(e) => setRusRub(e.target.value)} />
+                <TextField label="Курс белорусского рубля к доллару" type={'number'} step="any" value={belRub || ''} onChange={(e) => setBelRub(e.target.value)} />
+                <TextField label="Минимальная цена заказа" type={'number'} step="any" value={min || ''} onChange={(e) => setMin(e.target.value)} />
+                <Button type={'submit'} disabled={!(rusRub && belRub && min)}>Сохранить</Button>
               </Stack>
             </Box>
             <Button onClick={handleExitClick}>Выйти из аккаунта</Button>

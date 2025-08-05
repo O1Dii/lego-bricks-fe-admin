@@ -35,16 +35,19 @@ export default function OrdersTable({orders}) {
           navigate(`/orders/${order.id}`)
         }}>
           <Grid container alignItems="center" spacing={2} sx={{marginTop: {xs: "15px", md: 'auto'}, marginBottom: "10px"}}>
-            <Grid xs={6} md={3}>
+            <Grid xs={6} md={2}>
               {order.customer_name}
             </Grid>
-            <Grid xs={6} md={3}>
+            <Grid xs={6} md={2}>
               {order.customer_telephone}
             </Grid>
-            <Grid xs={6} md={3}>
+            <Grid xs={6} md={1}>
               <Checkbox checked={order.dostavka} />
             </Grid>
-            <Grid xs={6} md={3}>
+            <Grid xs={6} md={4}>
+              {order.comment}
+            </Grid>
+            <Grid xs={6} md={2}>
               {Math.round((order.total_price + Number.EPSILON) * 100) / 100}
             </Grid>
           </Grid>
@@ -70,22 +73,27 @@ export default function OrdersTable({orders}) {
       <Box sx={{flexGrow: 1}}>
         {data && data.length &&
           <Grid sx={{display: {xs: "none", md: "flex"}, padding: "25px 0"}} container spacing={2}>
-            <Grid xs={3}>
+            <Grid xs={2}>
               <strong>
                 Имя
               </strong>
             </Grid>
-            <Grid xs={3}>
+            <Grid xs={2}>
               <strong>
                 Номер телефона
               </strong>
             </Grid>
-            <Grid xs={3}>
+            <Grid xs={1}>
               <strong>
                 Нужна ли доставка
               </strong>
             </Grid>
-            <Grid xs={3}>
+            <Grid xs={4}>
+              <strong>
+                Комментарий
+              </strong>
+            </Grid>
+            <Grid xs={2}>
               <strong>
                 Сумма заказа
               </strong>

@@ -13,7 +13,12 @@ import CatalogTable from "../CatalogTable/CatalogTable";
 import Stack from "@mui/material/Stack";
 import {useParams} from "react-router-dom";
 import axios from "axios";
-import {ITEMS_SAVE_ITEM, ORDERS_DELETE_ORDER_BY_ID} from "../../constants/links";
+import {
+  ITEMS_SAVE_ITEM,
+  ORDERS_DELETE_ORDER_BY_ID,
+  ORDERS_SAVE_AS_WANTED_LIST_BY_ORDER_ID,
+  ORDERS_SAVE_COMMENT_BY_ORDER_ID
+} from "../../constants/links";
 
 
 export default function OrderDetails() {
@@ -23,12 +28,17 @@ export default function OrderDetails() {
 
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [failureSnackbarOpen, setFailureSnackbarOpen] = useState(false);
+  const [comment, setComment] = useState('');
 
   useEffect(() => {
     // if (user.accessToken) {
       getOrderDetails(orderId);
     // }
   }, [orderId])
+
+  useEffect(() => {
+    setComment(orderDetails.comment);
+  }, [orderDetails]);
 
   const onDeleteClick = () => {
     axios
@@ -41,6 +51,41 @@ export default function OrderDetails() {
         setSuccessSnackbarOpen(true);
       })
       .catch(error => {
+        setFailureSnackbarOpen(true);
+      })
+  }
+
+  const onSaveCommentClick = () => {
+    axios
+      .post(ORDERS_SAVE_COMMENT_BY_ORDER_ID(orderId), {comment},{
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      })
+      .then(response => {
+        setSuccessSnackbarOpen(true);
+      })
+      .catch(error => {
+        setFailureSnackbarOpen(true);
+      })
+  }
+
+  const saveAsWantedList = () => {
+    axios
+      .get(ORDERS_SAVE_AS_WANTED_LIST_BY_ORDER_ID(orderId), {
+        responseType: 'blob'
+      })
+      .then(response => {
+        const blob = new Blob([response.data], { type: 'application/xml' });
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'wanted_list.xml';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch(() => {
         setFailureSnackbarOpen(true);
       })
   }
@@ -60,7 +105,7 @@ export default function OrderDetails() {
           variant="filled"
           sx={{ width: '100%' }}
         >
-          Изменения успешно сохранены!
+          Операция прошла успешно!
         </Alert>
       </Snackbar>
       <Snackbar
@@ -85,11 +130,11 @@ export default function OrderDetails() {
               <TextField label={'Номер'} value={orderDetails.customer_telephone || ''}/>
               <TextField label={'Нужна ли доставка'} value={orderDetails.dostavka ? 'Да' : 'Нет'}/>
               <TextField label={'Общая сумма заказа'} value={orderDetails.total_price || ''}/>
-                {/*TODO: here*/}
-              <TextField label={'Комментарии'} value={'Пока не работает'}/>
+              <TextField label={'Комментарии'} onChange={(e) => setComment(e.target.value)} value={comment || ''}/>
               <CatalogTable items={orderDetails.items || []} withPagination={false} requireNavigate={false} urlBase={`/orders/${orderId}`} />
+              <Button onClick={onSaveCommentClick}>Сохранить комментарий</Button>
               <Button onClick={onDeleteClick}>Завершить и удалить заказ</Button>
-              <Button>Выгрузить в xlsx (пока не работает)</Button>
+              <Button onClick={saveAsWantedList}>Выгрузить в xlsx</Button>
             </Stack>
           </Grid>
         </Grid>

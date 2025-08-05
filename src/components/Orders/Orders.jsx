@@ -15,9 +15,9 @@ export default function Orders() {
   const {orders, loadOrders} = useContext(OrdersContext);
 
   useEffect(() => {
-    // if (user.accessToken) {
+    if (user.accessToken) {
       loadOrders();
-    // }
+    }
   }, [user.accessToken])
 
   return (
