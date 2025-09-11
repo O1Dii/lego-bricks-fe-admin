@@ -5,7 +5,7 @@ import Navigation from "../Navigation/Navigation";
 import TextField from "@mui/material/TextField";
 import {Alert, Button, Snackbar} from "@mui/material";
 import React, {useContext, useEffect, useState} from "react";
-import {CONFIGS_GET_EXCHANGE_RATES, CONFIGS_SAVE_EXCHANGE_RATES} from "../../constants/links";
+import {CONFIGS_GET_EXCHANGE_RATES, CONFIGS_GET_TASK_STATUS, CONFIGS_SAVE_EXCHANGE_RATES} from "../../constants/links";
 import axios from "axios";
 import {UserContext} from "../../context/UserContext";
 import Stack from "@mui/material/Stack";
@@ -18,6 +18,7 @@ export default function Configs() {
   const [rusRub, setRusRub] = useState(0);
   const [belRub, setBelRub] = useState(0);
   const [min, setMin] = useState(0);
+  const [taskStatus, setTaskStatus] = useState([]);
 
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [failureSnackbarOpen, setFailureSnackbarOpen] = useState(false);
@@ -35,6 +36,13 @@ export default function Configs() {
       })
       .catch(error => {
         setLoading(false);
+      })
+    axios
+      .get(CONFIGS_GET_TASK_STATUS())
+      .then(response => {
+        setTaskStatus(response.data)
+      })
+      .catch(error => {
       })
   }, [])
 
@@ -106,6 +114,9 @@ export default function Configs() {
           <Grid item xs={12}>
             <Box component={"form"} onSubmit={onSave}>
               <Stack spacing={2}>
+                <Typography>
+                  Информация по загрузкам каталога: <br/>{(taskStatus || []).map(each => <Typography>статус: "{each.status}"; сообщение: "{each.message}"<br/></Typography>)}
+                </Typography>
                 <TextField label="Курс российского рубля к доллару" type={'number'} step="any" value={rusRub || ''} onChange={(e) => setRusRub(e.target.value)} />
                 <TextField label="Курс белорусского рубля к доллару" type={'number'} step="any" value={belRub || ''} onChange={(e) => setBelRub(e.target.value)} />
                 <TextField label="Минимальная цена заказа" type={'number'} step="any" value={min || ''} onChange={(e) => setMin(e.target.value)} />

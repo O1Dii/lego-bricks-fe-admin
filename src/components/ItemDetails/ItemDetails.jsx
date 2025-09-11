@@ -99,7 +99,15 @@ export default function ItemDetails() {
       <Box className={"main-page-content"} sx={{margin: "40px"}}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Box component="img" sx={{height: 90, objectFit: "cover", borderRadius: "10px"}} src={imageUrl} alt={""} />
+            <Box
+              component="img"
+              sx={{height: 90, objectFit: "cover", borderRadius: "10px"}}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "https://storage.googleapis.com/lego-bricks-app-frontend/default.jpg";
+              }}
+              src={imageUrl}
+              alt={""} />
             <TextField label={'ссылка на картинку'} value={imageUrl} onChange={e => setImageUrl(e.target.value)}/>
           </Grid>
           <Grid item xs={12}>
