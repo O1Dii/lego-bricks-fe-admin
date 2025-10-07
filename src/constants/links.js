@@ -1,5 +1,6 @@
 // export const API_ROOT = 'http://localhost:8080/'
-export const API_ROOT = 'https://lego-bricks-343194171424.europe-north1.run.app/'
+// export const API_ROOT = 'https://lego-bricks-343194171424.europe-north1.run.app/'
+export const API_ROOT = 'https://mybriks.ru/api/'
 export const API_BASE = () => `${API_ROOT}`
 
 export const ITEMS_GET = (search, page, category) => `${API_BASE()}catalog?page=${page}${search !== '' ? '&search=' + search : ''}${category !== '' ? '&category=' + category : ''}`;
@@ -17,3 +18,5 @@ export const CONFIGS_SAVE_EXCHANGE_RATES = () => `${API_BASE()}admin/settings`;
 export const AUTHENTICATE = () => `${API_BASE()}admin/login`;
 export const GET_PRESIGNED_URL = () => `${API_BASE()}presigned_url`;
 export const DB_UPLOAD = () => `${API_BASE()}db_add`;
+export const SETTINGS_GET = () => `${API_BASE()}settings`;
+export const CART_PDF_SAVE = () => `${API_BASE()}download_pdf`;

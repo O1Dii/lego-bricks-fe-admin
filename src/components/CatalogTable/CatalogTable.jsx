@@ -63,7 +63,7 @@ export default function CatalogTable({items, withPagination= true, requireNaviga
               {product.color}
             </Grid>
             <Grid xs={6} md={3}>
-              {product.description}
+              {product.description.replace(/\./g, "<br/>")}
             </Grid>
             <Grid xs={12} md={3}>
               <Stack>
@@ -73,7 +73,10 @@ export default function CatalogTable({items, withPagination= true, requireNaviga
                   </Typography>
                 }
                 <Typography>
-                  Наличие: {product.quantity}
+                  {product.quantity_in_order ?
+                  `Наличие: ${product.quantity + product.quantity_in_order}.` : ''
+                  }
+                  В каталоге: {product.quantity}
                 </Typography>
                 <Typography>
                   Цена: {product.price || product.unit_price}

@@ -9,10 +9,12 @@ import {CONFIGS_GET_EXCHANGE_RATES, CONFIGS_GET_TASK_STATUS, CONFIGS_SAVE_EXCHAN
 import axios from "axios";
 import {UserContext} from "../../context/UserContext";
 import Stack from "@mui/material/Stack";
+import {SettingsContext} from "../../context/SettingsContext";
 
 
 export default function Configs() {
   const {user, logout} = useContext(UserContext)
+  const {reloadSettings} = useContext(SettingsContext);
   // TODO: change to true
   const [loading, setLoading] = useState(false);
   const [rusRub, setRusRub] = useState(0);
@@ -59,7 +61,8 @@ export default function Configs() {
         }
       })
       .then(response => {
-        setSuccessSnackbarOpen(true)
+        setSuccessSnackbarOpen(true);
+        reloadSettings();
       })
       .catch(error => {
         setFailureSnackbarOpen(true);

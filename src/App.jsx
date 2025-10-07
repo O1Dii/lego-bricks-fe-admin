@@ -14,6 +14,7 @@ import Login from "./components/Login/Login";
 import UserContextProvider from "./context/UserContext";
 import OrderDetails from "./components/OrderDetails/OrderDetails";
 import ItemDetails from "./components/ItemDetails/ItemDetails";
+import SettingsContextProvider from "./context/SettingsContext";
 
 // const theme = createTheme({
 //   palette: {
@@ -32,7 +33,9 @@ function App() {
       <StylesProvider injectFirst>
         <Router>
           <UserContextProvider>
+          <SettingsContextProvider>
             <Routes>
+              <Route path="/admin/*" element={<Login/>}/>
               <Route path="/login" element={<Login/>}/>
               <Route element={<MainLayout/>}>
                 <Route exact path="/" element={<Navigate to="/catalog" replace/>}/>
@@ -43,6 +46,7 @@ function App() {
                 <Route path="/orders/:orderId?" element={<OrderDetails/>}/>
               </Route>
             </Routes>
+          </SettingsContextProvider>
           </UserContextProvider>
         </Router>
       </StylesProvider>

@@ -14,17 +14,20 @@ import Stack from "@mui/material/Stack";
 import {useParams} from "react-router-dom";
 import axios from "axios";
 import {
+  CART_PDF_SAVE,
   ITEMS_SAVE_ITEM,
   ORDERS_DELETE_ORDER_BY_ID,
   ORDERS_SAVE_AS_WANTED_LIST_BY_ORDER_ID,
   ORDERS_SAVE_COMMENT_BY_ORDER_ID
 } from "../../constants/links";
+import {SettingsContext} from "../../context/SettingsContext";
 
 
 export default function OrderDetails() {
   const { orderId } = useParams();
   const {user} = useContext(UserContext)
   const {getOrderDetails, orderDetails} = useContext(OrdersContext);
+  const {rub, byn} = useContext(SettingsContext);
 
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [failureSnackbarOpen, setFailureSnackbarOpen] = useState(false);
@@ -90,6 +93,28 @@ export default function OrderDetails() {
       })
   }
 
+  const saveAsPdf = (items) => {
+    axios
+      .post(CART_PDF_SAVE(), {items: items.map(item => ({id: item.id, quantity: item.quantity_in_order}))}, {
+        responseType: 'blob'
+      })
+      .then(response => {
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'order_details.pdf';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch(() => {
+        setFailureSnackbarOpen(true);
+      })
+  }
+
+  console.log(orderDetails)
+
   return (
     <>
       <Navigation>
@@ -129,12 +154,22 @@ export default function OrderDetails() {
               <TextField label={'Имя'} value={orderDetails.customer_name || ''}/>
               <TextField label={'Номер'} value={orderDetails.customer_telephone || ''}/>
               <TextField label={'Нужна ли доставка'} value={orderDetails.dostavka ? 'Да' : 'Нет'}/>
-              <TextField label={'Общая сумма заказа'} value={orderDetails.total_price || ''}/>
+              <Typography fontSize={20}>
+                <strong>{orderDetails.total_price}$</strong>
+              </Typography>
+              <Typography fontSize={14} color={"#00000080"}>
+                (~{
+                  Math.round((parseFloat(orderDetails.total_price) * rub + Number.EPSILON) * 100) / 100
+                } RUB, {
+                  Math.round((parseFloat(orderDetails.total_price) * byn + Number.EPSILON) * 100) / 100
+                } BYN)
+              </Typography>
               <TextField label={'Комментарии'} onChange={(e) => setComment(e.target.value)} value={comment || ''}/>
               <CatalogTable items={orderDetails.items || []} withPagination={false} requireNavigate={false} urlBase={`/orders/${orderId}`} />
               <Button onClick={onSaveCommentClick}>Сохранить комментарий</Button>
               <Button onClick={onDeleteClick}>Завершить и удалить заказ</Button>
-              <Button onClick={saveAsWantedList}>Выгрузить в xlsx</Button>
+              <Button onClick={saveAsWantedList}>Выгрузить в wanted list</Button>
+              <Button onClick={() => saveAsPdf(orderDetails.items)}>Выгрузить в pdf</Button>
             </Stack>
           </Grid>
         </Grid>
