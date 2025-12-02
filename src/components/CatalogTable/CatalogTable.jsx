@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Unstable_Grid2';
-import {Button} from "@mui/material";
+import {Button, Checkbox} from "@mui/material";
 import {Link, MemoryRouter, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import PaginationItem from '@mui/material/PaginationItem';
 import MenuItem from '@mui/material/MenuItem';
@@ -39,10 +39,8 @@ export default function CatalogTable({items, withPagination= true, requireNaviga
           }
         }}>
           <Grid container alignItems="center" spacing={2} sx={{marginTop: {xs: "15px", md: 'auto'}, marginBottom: "10px"}}>
-            {/*<Grid xs={1} md={1}>*/}
-            {/*  <Checkbox />*/}
-            {/*</Grid>*/}
             <Grid sx={{display: "flex", alignItems: "center", justifyContent: {xs: "center"}}} xs={6} md={2}>
+              {!requireNavigate && <Checkbox />}
               <Box
                 component="img"
                 sx={{height: 90, objectFit: "contain", borderRadius: "10px", width: "80%"}}
@@ -62,8 +60,11 @@ export default function CatalogTable({items, withPagination= true, requireNaviga
             <Grid xs={6} md={2}>
               {product.color}
             </Grid>
-            <Grid xs={6} md={3}>
+            <Grid xs={6} md={2}>
               {product.description.replace(/\./g, "<br/>")}
+            </Grid>
+            <Grid xs={6} md={1}>
+              {product.condition}
             </Grid>
             <Grid xs={12} md={3}>
               <Stack>
@@ -129,9 +130,14 @@ export default function CatalogTable({items, withPagination= true, requireNaviga
                 Цвет
               </strong>
             </Grid>
-            <Grid xs={3}>
+            <Grid xs={2}>
               <strong>
                 Описание
+              </strong>
+            </Grid>
+            <Grid xs={1}>
+              <strong>
+                Состояние
               </strong>
             </Grid>
             <Grid xs={3}>

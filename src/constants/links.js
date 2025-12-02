@@ -7,7 +7,7 @@ export const ITEMS_GET = (search, page, category) => `${API_BASE()}catalog?page=
 export const ITEMS_GET_ITEM_BY_ID = (id) => `${API_BASE()}catalog_item/${id}`;
 export const ITEMS_SAVE_ITEM = (id) => `${API_BASE()}catalog_item/${id}`;
 export const CATEGORIES_GET = () => `${API_BASE()}category-structure`;
-export const ORDERS_GET = () => `${API_BASE()}admin/orders`;
+export const ORDERS_GET = (status) => `${API_BASE()}admin/orders${status ? '?status=' + status : ''}`;
 export const ORDERS_GET_ORDER_BY_ID = (id) => `${API_BASE()}admin/orders/${id}`;
 export const ORDERS_DELETE_ORDER_BY_ID = (id) => `${API_BASE()}admin/orders/${id}`;
 export const ORDERS_SAVE_COMMENT_BY_ORDER_ID = (id) => `${API_BASE()}admin/save_order_comment/${id}`;

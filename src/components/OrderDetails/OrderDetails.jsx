@@ -155,7 +155,7 @@ export default function OrderDetails() {
               <TextField label={'Номер'} value={orderDetails.customer_telephone || ''}/>
               <TextField label={'Нужна ли доставка'} value={orderDetails.dostavka ? 'Да' : 'Нет'}/>
               <Typography fontSize={20}>
-                <strong>{orderDetails.total_price}$</strong>
+                <strong>{Math.round(orderDetails.total_price * 100 + Number.EPSILON) / 100}$</strong>
               </Typography>
               <Typography fontSize={14} color={"#00000080"}>
                 (~{
@@ -166,10 +166,12 @@ export default function OrderDetails() {
               </Typography>
               <TextField label={'Комментарии'} onChange={(e) => setComment(e.target.value)} value={comment || ''}/>
               <CatalogTable items={orderDetails.items || []} withPagination={false} requireNavigate={false} urlBase={`/orders/${orderId}`} />
-              <Button onClick={onSaveCommentClick}>Сохранить комментарий</Button>
-              <Button onClick={onDeleteClick}>Завершить и удалить заказ</Button>
-              <Button onClick={saveAsWantedList}>Выгрузить в wanted list</Button>
-              <Button onClick={() => saveAsPdf(orderDetails.items)}>Выгрузить в pdf</Button>
+              <div><Button onClick={onSaveCommentClick}>Сохранить комментарий</Button></div>
+              {orderDetails.status === 'исполнен' ? <></> :
+                <div><Button onClick={onDeleteClick}>Завершить и удалить заказ</Button></div>
+              }
+              <div><Button onClick={saveAsWantedList}>Выгрузить в wanted list</Button></div>
+              <div><Button onClick={() => saveAsPdf(orderDetails.items)}>Выгрузить в pdf</Button></div>
             </Stack>
           </Grid>
         </Grid>

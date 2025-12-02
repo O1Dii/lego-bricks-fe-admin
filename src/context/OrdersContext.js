@@ -21,7 +21,7 @@ export default function OrdersContextProvider(props) {
   const [orderDetails, setOrderDetails] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const loadOrders = () => {
+  const loadOrders = (deleted) => {
     // setOrders({
     //   orders: [{
     //     id: '1',
@@ -65,7 +65,7 @@ export default function OrdersContextProvider(props) {
     // })
     setLoading(true)
     axios
-      .get(ORDERS_GET(), {
+      .get(ORDERS_GET(deleted ? 'исполнен' : null), {
         headers: {
           'Authorization': `Bearer ${user.accessToken}`
         }
