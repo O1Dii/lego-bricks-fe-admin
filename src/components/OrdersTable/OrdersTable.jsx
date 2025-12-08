@@ -8,10 +8,12 @@ import {useNavigate} from "react-router-dom";
 import {Checkbox} from "@mui/material";
 import {ItemsContext} from "../../context/ItemsContext";
 import {OrdersContext} from "../../context/OrdersContext";
+import {SettingsContext} from "../../context/SettingsContext";
 
 export default function OrdersTable({orders}) {
   const navigate = useNavigate();
   const {perPage, setPerPage, pages} = useContext(OrdersContext);
+  const {multipl} = useContext(SettingsContext);
   // end pagination
 
   const [data, setData] = useState([]);
@@ -48,7 +50,7 @@ export default function OrdersTable({orders}) {
               {order.comment}
             </Grid>
             <Grid xs={6} md={2}>
-              {Math.round((order.total_price + Number.EPSILON) * 100) / 100}
+              {Math.round((order.total_price * multipl + Number.EPSILON) * 100) / 100}
             </Grid>
           </Grid>
         </Paper>

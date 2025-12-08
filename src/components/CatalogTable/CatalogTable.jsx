@@ -13,10 +13,12 @@ import Pagination from '../Pagination/Pagination';
 import {useContext, useEffect, useState} from "react";
 import Paper from "@mui/material/Paper";
 import {ItemsContext} from "../../context/ItemsContext";
+import {SettingsContext} from "../../context/SettingsContext";
 
 export default function CatalogTable({items, withPagination= true, requireNavigate = true, urlBase='catalog'}) {
   const navigate = useNavigate();
   const {perPage, setPerPage, pages} = useContext(ItemsContext);
+  const {multipl} = useContext(SettingsContext);
   // end pagination
 
   const [data, setData] = useState([]);
@@ -80,7 +82,7 @@ export default function CatalogTable({items, withPagination= true, requireNaviga
                   В каталоге: {product.quantity}
                 </Typography>
                 <Typography>
-                  Цена: {product.price || product.unit_price}
+                  Цена: {Math.round(((product.price || product.unit_price) * multipl + Number.EPSILON) * 100) / 100}
                 </Typography>
               </Stack>
             </Grid>

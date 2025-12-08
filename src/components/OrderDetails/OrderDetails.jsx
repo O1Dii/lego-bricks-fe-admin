@@ -27,7 +27,7 @@ export default function OrderDetails() {
   const { orderId } = useParams();
   const {user} = useContext(UserContext)
   const {getOrderDetails, orderDetails} = useContext(OrdersContext);
-  const {rub, byn} = useContext(SettingsContext);
+  const {rub, byn, multipl} = useContext(SettingsContext);
 
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [failureSnackbarOpen, setFailureSnackbarOpen] = useState(false);
@@ -155,13 +155,13 @@ export default function OrderDetails() {
               <TextField label={'Номер'} value={orderDetails.customer_telephone || ''}/>
               <TextField label={'Нужна ли доставка'} value={orderDetails.dostavka ? 'Да' : 'Нет'}/>
               <Typography fontSize={20}>
-                <strong>{Math.round(orderDetails.total_price * 100 + Number.EPSILON) / 100}$</strong>
+                <strong>{Math.round(orderDetails.total_price * multipl * 100 + Number.EPSILON) / 100}$</strong>
               </Typography>
               <Typography fontSize={14} color={"#00000080"}>
                 (~{
-                  Math.round((parseFloat(orderDetails.total_price) * rub + Number.EPSILON) * 100) / 100
+                  Math.round((parseFloat(orderDetails.total_price) * multipl * rub + Number.EPSILON) * 100) / 100
                 } RUB, {
-                  Math.round((parseFloat(orderDetails.total_price) * byn + Number.EPSILON) * 100) / 100
+                  Math.round((parseFloat(orderDetails.total_price) * multipl * byn + Number.EPSILON) * 100) / 100
                 } BYN)
               </Typography>
               <TextField label={'Комментарии'} onChange={(e) => setComment(e.target.value)} value={comment || ''}/>

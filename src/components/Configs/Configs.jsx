@@ -20,6 +20,7 @@ export default function Configs() {
   const [rusRub, setRusRub] = useState(0);
   const [belRub, setBelRub] = useState(0);
   const [min, setMin] = useState(0);
+  const [multipl, setMultipl] = useState(1);
   const [taskStatus, setTaskStatus] = useState([]);
 
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
@@ -35,6 +36,7 @@ export default function Configs() {
         setBelRub(response.data.byn)
         setRusRub(response.data.rub)
         setMin(response.data.min)
+        setMultipl(response.data.multipl)
       })
       .catch(error => {
         setLoading(false);
@@ -54,7 +56,8 @@ export default function Configs() {
       .post(CONFIGS_SAVE_EXCHANGE_RATES(), {
         rub: rusRub,
         byn: belRub,
-        min
+        min,
+        multipl
       }, {
         headers: {
           'Authorization': `Bearer ${user.accessToken}`
@@ -123,7 +126,8 @@ export default function Configs() {
                 <TextField label="Курс российского рубля к доллару" type={'number'} step="any" value={rusRub || ''} onChange={(e) => setRusRub(e.target.value)} />
                 <TextField label="Курс белорусского рубля к доллару" type={'number'} step="any" value={belRub || ''} onChange={(e) => setBelRub(e.target.value)} />
                 <TextField label="Минимальная цена заказа" type={'number'} step="any" value={min || ''} onChange={(e) => setMin(e.target.value)} />
-                <Button type={'submit'} disabled={!(rusRub && belRub && min)}>Сохранить</Button>
+                <TextField label="Коэфициент цены" type={'number'} step="any" value={multipl || ''} onChange={(e) => setMultipl(e.target.value)} />
+                <Button type={'submit'} disabled={!(rusRub && belRub && min && multipl)}>Сохранить</Button>
               </Stack>
             </Box>
             <Button onClick={handleExitClick}>Выйти из аккаунта</Button>
